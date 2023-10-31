@@ -24,7 +24,7 @@
  </div>   
  @endif 
 
-  <form action="{{route('admin.projects.store')}}" method="POST">
+  <form action="{{route('admin.projects.store')}}" method="POST" enctype="multipart/form-data">
     @csrf
 
     <div class="row g-3 mt-3">
@@ -71,13 +71,22 @@
             {{$message}}
           </div>
           @enderror
-
         </div>   
 
       <div class="col-12">
         <label for="repo" class="form-lable mb-1">Repo</label>
         <input type="url" name="repo" id="repo" class="form-control @error('repo')is-invalid @enderror" value="{{old('repo')}}">
         @error('repo')
+        <div class="invalid-feedback">
+          {{$message}}
+        </div>
+        @enderror
+      </div>
+
+      <div class="col-12">
+        <label for="cover_image" class="form-lable mb-1">Image</label>
+        <input type="file" name="cover_image" id="cover_image" class="form-control @error('cover_image')is-invalid @enderror" value="{{old('cover_image')}}">
+        @error('cover_image')
         <div class="invalid-feedback">
           {{$message}}
         </div>

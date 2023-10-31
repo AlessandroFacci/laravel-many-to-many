@@ -29,7 +29,7 @@
   </div>   
   @endif 
 
-  <form action="{{route('admin.projects.update', $project)}}" method="POST">
+  <form action="{{route('admin.projects.update', $project)}}" method="POST" enctype="multipart/form-data">
     @csrf
     @method('PATCH')
 
@@ -91,6 +91,24 @@
         </div>
         @enderror
       </div>
+
+      <div class="col-12">
+        <div class="row g-3 mt-3">
+          <div class="col-12">
+            <label for="cover_image" class="form-lable mb-1">Image</label>
+            <input type="file" name="cover_image" id="cover_image" class="form-control @error('cover_image')is-invalid @enderror" value="{{old('cover_image')}}">
+            @error('cover_image')
+            <div class="invalid-feedback">
+              {{$message}}
+            </div>
+            @enderror
+          </div>
+          <div class="col-3">
+            <img src="{{asset('/storage/' . $project->cover_image)}}" class="img-fluid" alt="">
+          </div>
+        </div>        
+      </div>
+
 
       <div class="col-12">
         <label for="description" class="form-lable mb-1">Description</label>
