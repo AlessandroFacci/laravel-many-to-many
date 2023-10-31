@@ -26,6 +26,7 @@ class UpdateProjectRequest extends FormRequest
         return [
             'title' => ['required','string','unique:projects,id,' . $this->project->id],
             'type_id' => ['nullable','exists:types,id'],
+            'technologies'=> ['nullable','exists:technologies,id'],
             'repo' => ['required','string', 'url'],
             'description' => ['required','string'],
         ];

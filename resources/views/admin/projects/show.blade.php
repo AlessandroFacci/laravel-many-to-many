@@ -30,6 +30,10 @@
     </div>
 
     <div class="col-12">
+      <strong>Technologies:</strong> {!! $project->getTechnologyBadges() !!}
+    </div>
+
+    <div class="col-12">
       <strong>Repo:</strong> {{$project->repo}}
     </div>
 

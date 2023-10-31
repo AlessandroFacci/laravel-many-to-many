@@ -6,9 +6,11 @@ use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Project;
 use App\Models\Type;
+use App\Models\Technology;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Str;
+use Illuminate\Support\Arr;
 
 
 class ProjectController extends Controller 
@@ -35,7 +37,8 @@ class ProjectController extends Controller
     {
         $title = 'Create a new project';
         $types = Type::all();
-        return view('admin.projects.create', compact('title','types'));
+        $technologies = Technology::all();
+        return view('admin.projects.create', compact('title','types','technologies'));
     }
 
     /**
@@ -47,17 +50,16 @@ class ProjectController extends Controller
     public function store(StoreProjectRequest $request)
     {
         $data = $request->validated();
-        
-        $project = new Project();
 
-        // $project->title = $data['title'];
-        // $project->repo = $data['repo'];
-        // $project->description = $data['description'];
+        $project = new Project();
         
         $project->fill($data);  
-
         $project->slug  = Str::slug($project->title);
         $project->save();
+
+        if (Arr::exists($data,'technologies')) {
+        $project->technologies()->attach($data['technologies']);
+        }
 
         return redirect()->route('admin.projects.show', $project);
     }
@@ -68,7 +70,7 @@ class ProjectController extends Controller
      * @param  \App\Models\Project  $project
      * * @return \Illuminate\Http\Response
      */
-    public function show(Project $project)
+    public function show(Project $project) 
     {
         return view('admin.projects.show', compact('project'));
     }
@@ -83,8 +85,11 @@ class ProjectController extends Controller
     {
         $title = 'Edit project';
         $types = Type::all();
+        $technologies = Technology::all();
         // $project = Project::findOrFail($id);
-        return view('admin.projects.edit', compact('title', 'project', 'types'));
+
+        $technology_ids = $project->technologies->pluck('id')->toArray();
+        return view('admin.projects.edit', compact('title', 'project', 'types', 'technologies', 'technology_ids'));
     }
 
     /**
@@ -100,6 +105,12 @@ class ProjectController extends Controller
         $project->fill($data);
         $project->slug = Str::slug($project->title);
         $project->save();
+
+        if (Arr::exists($data,'technologies')) {
+            $project->technologies()->sync($data['technologies']);
+            }else{
+                $project->technologies()->detach();
+            }
 
         return redirect()->route('admin.projects.show', $project);
 
